@@ -63,6 +63,7 @@ def makeTop(targetScr):#绘制顶栏
     targetScr.text((1, 10), os.popen('date +%H:%M').read(), font = menuFont, fill = 255)#时间
     cursor = 0
     cursor += ti.netInfo(targetScr,cursor)
+    
 def textAlign(tarScreen,strTo,align,fontName,verticalPos,horiStart,horiEnd,fillType):
     if align == 1:
         lenPos=fontName.getsize(strTo)[0]
@@ -83,13 +84,13 @@ def main():
     menuFont = ImageFont.truetype('/usr/share/fonts/opentype/SourceHanSerifCN-Regular.otf', 15)#设定操作指示器字体
     tilteFont = ImageFont.truetype('/usr/share/fonts/opentype/SourceHanSerifCN-Regular.otf', 35)
     #clearScreen主页布局：开始绘制
-    mainScreen.text((2, 20), '位置：', font = menuFont, fill = 0)
-    mainScreen.text((2+menuFont.getsize('位置：')[0], 20), getWeather('城市'), font = menuFont, fill = 0)
+    mainScreen.text((2, 20), getWeather('城市'), font = menuFont, fill = 0)
     #天气模块
-    textAlign(mainScreen,getWeather('气温'),2,tilteFont,40,0,176,0)
-    textAlign(mainScreen,getWeather('天气'),2,menuFont,80,0,176,0)
-    textAlign(mainScreen,getWeather('风向')+getWeather('风速'),2,menuFont,97,0,176,0)
+    textAlign(mainScreen,getWeather('气温'),2,tilteFont,15,0,176,0)
+    textAlign(mainScreen,getWeather('天气')+'|'+getWeather('体感温度'),2,menuFont,58,0,176,0)
+    textAlign(mainScreen,getWeather('风向')+getWeather('风速'),2,menuFont,77,0,176,0)
     #------
+    mainScreen.line((0, 100, 176, 100), fill = 0)
     makeTop(mainScreen)
     makeButtom(mainScreen)
     #结束主页绘制
