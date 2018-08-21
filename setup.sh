@@ -1,2 +1,2 @@
 #!/bin/zsh
-python3 /home/pi/pix/display/main.py
+python3 /home/pi/PIX/display/main.py
