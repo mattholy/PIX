@@ -8,6 +8,7 @@ from PIL import ImageDraw
 import os
 import urllib.request
 import json
+import time
 
 
 def getWeather(item):#可选  城市、气温、体感温度、天气、气压、风向、风速、湿度
@@ -63,7 +64,7 @@ def makeTop(targetScr):#绘制顶栏
     targetScr.text((1, 10), os.popen('date +%H:%M').read(), font = menuFont, fill = 255)#时间
     cursor = 0
     cursor += ti.netInfo(targetScr,cursor)
-    
+
 def textAlign(tarScreen,strTo,align,fontName,verticalPos,horiStart,horiEnd,fillType):
     if align == 1:
         lenPos=fontName.getsize(strTo)[0]
@@ -77,26 +78,35 @@ def textAlign(tarScreen,strTo,align,fontName,verticalPos,horiStart,horiEnd,fillT
 
 
 def main():
-    epd = epd2in7.EPD()
-    epd.init()
-    clearScreen = Image.new('1', (epd2in7.EPD_WIDTH, epd2in7.EPD_HEIGHT), 255)#新建一个屏幕clearScreen作为主页
-    mainScreen = ImageDraw.Draw(clearScreen)#开始绘制该屏幕
-    menuFont = ImageFont.truetype('/usr/share/fonts/opentype/SourceHanSerifCN-Regular.otf', 15)#设定操作指示器字体
-    tilteFont = ImageFont.truetype('/usr/share/fonts/opentype/SourceHanSerifCN-Regular.otf', 35)
-    #clearScreen主页布局：开始绘制
-    mainScreen.text((2, 20), getWeather('城市'), font = menuFont, fill = 0)
-    #天气模块
-    textAlign(mainScreen,getWeather('气温'),2,tilteFont,15,0,176,0)
-    textAlign(mainScreen,getWeather('天气')+'|'+getWeather('体感温度'),2,menuFont,58,0,176,0)
-    textAlign(mainScreen,getWeather('风向')+getWeather('风速'),2,menuFont,77,0,176,0)
-    #------
-    mainScreen.line((0, 100, 176, 100), fill = 0)
-    makeTop(mainScreen)
-    makeButtom(mainScreen)
-    #结束主页绘制
-    epd.display_frame(epd.get_frame_buffer(clearScreen))#push到屏幕显示
+    try:
+        clearScreen = Image.new('1', (epd2in7.EPD_WIDTH, epd2in7.EPD_HEIGHT), 255)#新建一个屏幕clearScreen作为主页
+        mainScreen = ImageDraw.Draw(clearScreen)#开始绘制该屏幕
+        menuFont = ImageFont.truetype('/usr/share/fonts/opentype/SourceHanSerifCN-Regular.otf', 15)#设定操作指示器字体
+        tilteFont = ImageFont.truetype('/usr/share/fonts/opentype/SourceHanSerifCN-Regular.otf', 35)
+        #clearScreen主页布局：开始绘制
+        mainScreen.text((2, 20), '成都', font = menuFont, fill = 0)
+        #天气模块
+        exit_code = os.system('ping -c 4 www.weather.com.cn > /dev/null 2>&1')
+        if exit_code:
+            textAlign(mainScreen,'-℃',2,tilteFont,15,0,176,0)
+            textAlign(mainScreen,'无网络连接',2,menuFont,58,0,176,0)
+            textAlign(mainScreen,'无网络连接',2,menuFont,77,0,176,0)
+        else:
+            textAlign(mainScreen,getWeather('气温'),2,tilteFont,15,0,176,0)
+            textAlign(mainScreen,getWeather('天气')+'|'+getWeather('体感温度'),2,menuFont,58,0,176,0)
+            textAlign(mainScreen,getWeather('风向')+getWeather('风速'),2,menuFont,77,0,176,0)
+        #------
+        mainScreen.line((0, 100, 176, 100), fill = 0)
+        makeTop(mainScreen)
+        makeButtom(mainScreen)
+        #结束主页绘制
+        epd.display_frame(epd.get_frame_buffer(clearScreen))#push到屏幕显示
+    except:
+        time.sleep(1)
 
 if __name__ == '__main__':
+    epd = epd2in7.EPD()
+    epd.init()
     main()
     oldTime=os.popen('date +%H:%M').read()
     oldIP=os.popen('hostname -I').read()
