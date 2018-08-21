@@ -85,9 +85,11 @@ def main():
     #clearScreen主页布局：开始绘制
     mainScreen.text((2, 20), '位置：', font = menuFont, fill = 0)
     mainScreen.text((2+menuFont.getsize('位置：')[0], 20), getWeather('城市'), font = menuFont, fill = 0)
+    #天气模块
     textAlign(mainScreen,getWeather('气温'),2,tilteFont,40,0,176,0)
     textAlign(mainScreen,getWeather('天气'),2,menuFont,80,0,176,0)
     textAlign(mainScreen,getWeather('风向')+getWeather('风速'),2,menuFont,97,0,176,0)
+    #------
     makeTop(mainScreen)
     makeButtom(mainScreen)
     #结束主页绘制
